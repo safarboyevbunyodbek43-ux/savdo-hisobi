@@ -1,0 +1,6 @@
+{
+  "appId": "uz.savdo.hisobi",
+  "appName": "Savdo Hisobi",
+  "webDir": "www",
+  "android": { "allowMixedContent": false }
+}

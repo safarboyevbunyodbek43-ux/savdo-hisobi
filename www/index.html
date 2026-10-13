@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0f766e">
+<title>Savdo Hisobi</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#f3f5f4;--card:#fff;--ink:#14231f;--mut:#667571;--line:#e1e7e4;
+  --pri:#0f766e;--pri2:#0b5d56;--pri-soft:#e1f3f0;
+  --up:#15803d;--down:#c2271f;--warn:#b45309;--warn-soft:#fef3c7;
+  --key:#f0f3f2;--op:#d8ece9;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0e1614;--card:#16211e;--ink:#e8f0ed;--mut:#8da39d;--line:#263430;
+  --pri:#2bb3a5;--pri2:#1f8f84;--pri-soft:#173a36;--up:#4ade80;--down:#f87171;--warn:#fbbf24;--warn-soft:#3b2f10;--key:#1e2c28;--op:#1b3a36}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100%;height:100dvh}
+header{background:var(--pri);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:18px;margin:0;font-weight:700}
+header small{opacity:.85}
+main{flex:1;overflow-y:auto;padding:14px 14px 24px;-webkit-overflow-scrolling:touch}
+.wrap{max-width:900px;margin:0 auto}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border:0;background:none;color:var(--mut);padding:8px 2px 7px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font-weight:600}
+nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--pri)}
+@media (min-width:860px){
+  #app{flex-direction:row-reverse}
+  #app>div.col{display:flex;flex-direction:column;flex:1;min-width:0}
+  nav{flex-direction:column;width:96px;border-top:0;border-right:1px solid var(--line);padding-top:12px}
+  nav button{padding:16px 2px;font-size:12px;flex:none}
+}
+.col{display:contents}
+@media (min-width:860px){.col{display:flex}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 10px;font-size:15px}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(2,1fr)}
+@media (min-width:700px){.grid.g3{grid-template-columns:repeat(3,1fr)}.grid.g4{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.stat .l{font-size:12px;color:var(--mut);margin-bottom:4px}
+.stat .v{font-size:19px;font-weight:700;word-break:break-word}
+.up{color:var(--up)}.down{color:var(--down)}.mut{color:var(--mut)}
+button.btn{border:0;border-radius:11px;padding:11px 16px;font-size:15px;font-weight:700;background:var(--pri);color:#fff;cursor:pointer}
+button.btn:active{background:var(--pri2)}
+button.btn.sec{background:var(--pri-soft);color:var(--pri)}
+button.btn.red{background:#fde8e6;color:var(--down)}
+button.btn.sm{padding:7px 11px;font-size:13px;border-radius:9px}
+button.btn.full{width:100%}
+input,select,textarea{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:11px 12px;font-size:16px;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-color:transparent}
+label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px;font-weight:600}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1}.row>.auto{flex:none}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.list>div.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);cursor:default}
+.list>div.item:last-child{border-bottom:0}
+.item .t{font-weight:600}.item .s{font-size:12px;color:var(--mut)}
+.item.click{cursor:pointer}
+.amt{font-weight:700;white-space:nowrap}
+.empty{text-align:center;color:var(--mut);padding:26px 10px}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:3px;margin-bottom:12px}
+.seg button{flex:1;border:0;background:none;padding:9px;border-radius:8px;font-weight:700;color:var(--mut);font-size:14px;cursor:pointer}
+.seg button.on{background:var(--pri);color:#fff}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+tr.be td{background:var(--pri-soft);font-weight:700}
+.scroll{overflow-x:auto}
+/* calculator */
+.calc{max-width:420px;margin:0 auto}
+.disp{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 16px;margin-bottom:10px;text-align:right;min-height:104px;display:flex;flex-direction:column;justify-content:flex-end}
+.disp .ex{color:var(--mut);font-size:17px;min-height:24px;word-break:break-all}
+.disp .rs{font-size:38px;font-weight:700;word-break:break-all;line-height:1.15}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.keys button{border:0;background:var(--key);color:var(--ink);font-size:23px;font-weight:600;border-radius:14px;padding:0;height:clamp(52px,8.5vh,66px);cursor:pointer}
+.keys button:active{filter:brightness(.92)}
+.keys button.op{background:var(--op);color:var(--pri)}
+.keys button.eq{background:var(--pri);color:#fff}
+.keys button.cl{color:var(--down)}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:50}
+@media (min-width:700px){.ov{align-items:center}}
+.sheet{background:var(--card);width:100%;max-width:460px;border-radius:20px 20px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto}
+@media (min-width:700px){.sheet{border-radius:20px}}
+.sheet h2{margin:0 0 4px;font-size:19px}
+.big{font-size:30px;font-weight:800;color:var(--pri);margin:4px 0 8px}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:#14231f;color:#fff;padding:10px 18px;border-radius:24px;font-size:14px;z-index:99;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700}
+.badge.r{background:#fde8e6;color:var(--down)}.badge.g{background:#dcfce7;color:var(--up)}
+.note{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.chart{width:100%;height:190px}
+.chk{display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:600;font-size:14px}
+.chk input{width:20px;height:20px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="col">
+    <header><h1 id="shopName">Savdo Hisobi</h1><small id="todayLbl"></small></header>
+    <main><div class="wrap" id="view"></div></main>
+  </div>
+  <nav id="nav"></nav>
+</div>
+<div id="modal"></div>
+
+<script>
+"use strict";
+/* ============ Ma'lumotlar ============ */
+const KEY = "savdo_hisobi_v1";
+let DB;
+function load(){
+  try{ DB = JSON.parse(localStorage.getItem(KEY)); }catch(e){ DB = null; }
+  if(!DB || typeof DB!=="object") DB = {};
+  DB.customers = DB.customers || [];
+  DB.sales = DB.sales || [];
+  DB.capital = DB.capital || [];
+  DB.settings = Object.assign({shop:"",margin:20}, DB.settings||{});
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){ toast("Saqlashda xato!"); } }
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ============ Yordamchilar ============ */
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2,"0");
+const ymd = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const today = () => ymd(new Date());
+const parseD = s => { const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); };
+const addDays = (d,n)=>{ const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+const MONTHS = ["yan","fev","mar","apr","may","iyn","iyl","avg","sen","okt","noy","dek"];
+const fmtDate = s => { const d=parseD(s); return d.getDate()+" "+MONTHS[d.getMonth()]+" "+d.getFullYear(); };
+function num(x){ // 1 234 567,5
+  x = Math.round((Number(x)||0)*100)/100;
+  const neg = x<0; x=Math.abs(x);
+  let [i,f] = x.toString().split(".");
+  i = i.replace(/\B(?=(\d{3})+(?!\d))/g," ");
+  return (neg?"−":"")+i+(f?","+f:"");
+}
+const som = x => num(x)+" so'm";
+const val = el => { const v = parseFloat(String(el.value).replace(/\s/g,"").replace(",",".")); return isNaN(v)?0:v; };
+function toast(t){ const e=document.createElement("div"); e.className="toast"; e.textContent=t; document.body.appendChild(e); setTimeout(()=>e.remove(),2200); }
+function saleProfit(s){
+  if(s.cost!=null && s.cost!=="") return s.amount - s.cost;
+  return s.amount * (DB.settings.margin||0)/100;
+}
+
+/* ============ Modal ============ */
+function openModal(html, onMount){
+  const m=$("#modal");
+  m.innerHTML = '<div class="ov"><div class="sheet">'+html+'</div></div>';
+  $(".ov",m).addEventListener("mousedown",e=>{ if(e.target.classList.contains("ov")) closeModal(); });
+  onMount && onMount($(".sheet",m));
+}
+function closeModal(){ $("#modal").innerHTML=""; }
+function confirmBox(text, yes){
+  openModal(`<h2>${esc(text)}</h2><div class="row" style="margin-top:16px"><button class="btn sec" id="n">Yo'q</button><button class="btn red" id="y">Ha, o'chirish</button></div>`,
+    s=>{ $("#n",s).onclick=closeModal; $("#y",s).onclick=()=>{closeModal();yes();}; });
+}
+
+/* ============ Navigatsiya ============ */
+const ICONS = {
+  calc:'<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>',
+  debt:'<svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 8h6M9 12h6"/></svg>',
+  cap:'<svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
+  stat:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  set:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.7a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg>'
+};
+const TABS = [["calc","Kalkulyator"],["debt","Qarz daftari"],["cap","Kapital"],["stat","Statistika"],["set","Sozlama"]];
+let tab = "calc", openCustomer = null, period = "day";
+function renderNav(){
+  $("#nav").innerHTML = TABS.map(([k,l])=>`<button data-k="${k}" class="${tab===k?"on":""}">${ICONS[k]}<span>${l}</span></button>`).join("");
+  $("#nav").querySelectorAll("button").forEach(b=>b.onclick=()=>{ tab=b.dataset.k; openCustomer=null; render(); });
+}
+function render(){
+  $("#shopName").textContent = DB.settings.shop || "Savdo Hisobi";
+  $("#todayLbl").textContent = fmtDate(today());
+  renderNav();
+  const v=$("#view");
+  ({calc:viewCalc,debt:viewDebt,cap:viewCap,stat:viewStat,set:viewSet})[tab](v);
+  $("main").scrollTop = 0;
+}
+
+/* ============ 1) KALKULYATOR ============ */
+let expr = "", justEq = false, lastRes = null;
+function evalExpr(s){
+  // xavfsiz parser: + - × ÷ %  ()
+  const t = s.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/,/g,".");
+  let i=0;
+  const peek=()=>t[i];
+  function number(){
+    let st=i; while(i<t.length && /[0-9.]/.test(t[i])) i++;
+    if(st===i) throw 0; const n=parseFloat(t.slice(st,i)); if(isNaN(n)) throw 0; return n;
+  }
+  function factor(){
+    if(peek()==="-"){ i++; return -factor(); }
+    if(peek()==="+"){ i++; return factor(); }
+    let n = number();
+    while(peek()==="%"){ i++; n = n/100; }
+    return n;
+  }
+  function term(){
+    let a=factor();
+    while(peek()==="*"||peek()==="/"){
+      const o=t[i++]; const b=factor();
+      a = o==="*"? a*b : a/b;
+    }
+    return a;
+  }
+  function expr_(){
+    let a=term();
+    while(peek()==="+"||peek()==="-"){
+      const o=t[i++];
+      // 200 + 10%  => 200 + 10% от 200
+      const startI=i; let b=term();
+      if(t[i-1]==="%" && /^[0-9.]+%$/.test(t.slice(startI,i))) b = a*b;
+      a = o==="+"? a+b : a-b;
+    }
+    return a;
+  }
+  const r = expr_(); if(i<t.length) throw 0;
+  if(!isFinite(r)) throw 0;
+  return Math.round(r*1e6)/1e6;
+}
+function dispExpr(s){
+  return s.replace(/(\d+)(\.\d*)?/g,(m,a,b)=>a.replace(/\B(?=(\d{3})+(?!\d))/g," ")+(b?","+b.slice(1):""));
+}
+function press(k){
+  if(k==="C"){ expr=""; justEq=false; lastRes=null; }
+  else if(k==="⌫"){ expr=expr.slice(0,-1); justEq=false; }
+  else if(k==="="){ doEq(); return; }
+  else if("+−×÷".includes(k)){
+    if(justEq && lastRes!=null){ expr=String(lastRes); }
+    justEq=false;
+    if(!expr) { if(k==="−") expr="−"; updCalc(); return; }
+    if("+−×÷".includes(expr.slice(-1))) expr=expr.slice(0,-1);
+    expr+=k;
+  } else {
+    if(justEq){ expr=""; justEq=false; }
+    if(k==="."){
+      const last = expr.split(/[+−×÷]/).pop();
+      if(last.includes(".")) return;
+      if(last==="") expr+="0";
+    }
+    if(k==="00" && (expr===""||/[+−×÷]$/.test(expr))) k="0";
+    expr+=k;
+  }
+  updCalc();
+}
+function liveRes(){
+  if(!expr) return "0";
+  try{ return num(evalExpr(expr.replace(/[+−×÷]$/,""))); }catch(e){ return null; }
+}
+function updCalc(){
+  const ex=$("#cEx"), rs=$("#cRs"); if(!ex) return;
+  if(justEq){ ex.textContent = dispExpr(expr)+" ="; rs.textContent = num(lastRes); }
+  else {
+    ex.textContent = dispExpr(expr);
+    const r=liveRes(); rs.textContent = r==null? (expr?"…":"0") : (/[+−×÷%]/.test(expr.replace(/^−/,""))? r : (expr?dispExpr(expr):"0"));
+  }
+}
+function doEq(){
+  if(!expr) return;
+  let r; try{ r = evalExpr(expr.replace(/[+−×÷]$/,"")); }catch(e){ toast("Xato ifoda"); return; }
+  const shown = expr.replace(/[+−×÷]$/,"");
+  lastRes = r; expr = shown; justEq = true; updCalc();
+  if(r>0) askAddSale(r);
+}
+function askAddSale(amount){
+  const custOpts = DB.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+  openModal(`
+    <h2>Savdoga qo'shilsinmi?</h2>
+    <div class="big">${som(amount)}</div>
+    <label>Tannarx (ixtiyoriy) — foyda aniq hisoblanishi uchun</label>
+    <input id="sCost" inputmode="decimal" placeholder="Masalan: ${num(Math.round(amount*0.8))}">
+    <div class="mut" style="font-size:12px;margin-top:4px">Bo'sh qoldirsangiz, foyda ${DB.settings.margin||0}% deb olinadi (Sozlamada o'zgartiriladi)</div>
+    <label class="chk"><input type="checkbox" id="sDebt"> Nasiyaga (qarz daftariga yozish)</label>
+    <div id="debtBox" style="display:none">
+      <label>Mijoz</label>
+      <select id="sCust">${custOpts}<option value="__new">+ Yangi mijoz…</option></select>
+      <input id="sNew" placeholder="Yangi mijoz ismi" style="display:none;margin-top:8px">
+    </div>
+    <label>Izoh (ixtiyoriy)</label><input id="sNote" placeholder="Nima sotildi?">
+    <div class="row" style="margin-top:16px"><button class="btn sec" id="no">Yo'q</button><button class="btn" id="yes">Ha, qo'shish</button></div>`,
+  s=>{
+    const dBox=$("#debtBox",s), sel=$("#sCust",s), nw=$("#sNew",s);
+    if(!DB.customers.length){ sel.value="__new"; nw.style.display="block"; }
+    $("#sDebt",s).onchange=e=>{ dBox.style.display=e.target.checked?"block":"none"; };
+    sel.onchange=()=>{ nw.style.display = sel.value==="__new"?"block":"none"; };
+    $("#no",s).onclick=closeModal;
+    $("#yes",s).onclick=()=>{
+      const costRaw=$("#sCost",s).value.trim();
+      const sale={id:uid(),date:today(),ts:Date.now(),amount,cost:costRaw===""?null:val($("#sCost",s)),note:$("#sNote",s).value.trim()};
+      if($("#sDebt",s).checked){
+        let cid=sel.value;
+        if(cid==="__new"){
+          const nm=nw.value.trim(); if(!nm){ toast("Mijoz ismini yozing"); return; }
+          const c={id:uid(),name:nm,phone:"",note:"",tx:[]}; DB.customers.push(c); cid=c.id;
+        }
+        const c=DB.customers.find(x=>x.id===cid);
+        c.tx.push({id:uid(),date:today(),type:"debt",amount,note:sale.note||"Savdo"});
+        sale.customerId=cid;
+      }
+      DB.sales.push(sale); save(); closeModal(); toast("Savdoga qo'shildi ✓");
+      expr=""; justEq=false; lastRes=null; render();
+    };
+  });
+}
+function viewCalc(v){
+  const t=today();
+  const ts=DB.sales.filter(s=>s.date===t);
+  const tot=ts.reduce((a,s)=>a+s.amount,0), pr=ts.reduce((a,s)=>a+saleProfit(s),0);
+  v.innerHTML = `
+  <div class="calc">
+    <div class="disp"><div class="ex" id="cEx"></div><div class="rs" id="cRs">0</div></div>
+    <div class="keys" id="keys">
+      ${["C","⌫","%","÷","7","8","9","×","4","5","6","−","1","2","3","+","00","0",".","="].map(k=>{
+        const c = k==="="?"eq":(k==="C"?"cl":("÷×−+%⌫".includes(k)?"op":""));
+        return `<button class="${c}" data-k="${k}">${k}</button>`;}).join("")}
+    </div>
+  </div>
+  <div style="height:14px"></div>
+  <div class="grid g3" style="max-width:640px;margin:0 auto 12px">
+    <div class="stat"><div class="l">Bugungi savdo</div><div class="v">${som(tot)}</div></div>
+    <div class="stat"><div class="l">Bugungi foyda</div><div class="v up">${som(pr)}</div></div>
+    <div class="stat"><div class="l">Savdolar soni</div><div class="v">${ts.length}</div></div>
+  </div>
+  <div class="card" style="max-width:640px;margin:0 auto">
+    <h3>Bugungi savdolar</h3>
+    <div class="list">${ts.length? ts.slice().reverse().map(s=>`
+      <div class="item"><div><div class="t">${som(s.amount)} ${s.customerId?'<span class="badge r">nasiya</span>':''}</div>
+      <div class="s">${new Date(s.ts).toLocaleTimeString("uz",{hour:"2-digit",minute:"2-digit"})}${s.note?" · "+esc(s.note):""}</div></div>
+      <button class="btn red sm" data-del="${s.id}">✕</button></div>`).join("") : '<div class="empty">Hali savdo yo\'q.<br>Hisoblang va «=» bosing — savdoga qo\'shish so\'raladi.</div>'}</div>
+  </div>`;
+  $("#keys").querySelectorAll("button").forEach(b=>b.onclick=()=>press(b.dataset.k));
+  v.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>confirmBox("Bu savdo o'chirilsinmi?",()=>{
+    const s=DB.sales.find(x=>x.id===b.dataset.del);
+    if(s && s.customerId){ const c=DB.customers.find(x=>x.id===s.customerId); if(c){ const i=c.tx.findIndex(t=>t.type==="debt"&&t.amount===s.amount&&t.date===s.date); if(i>=0) c.tx.splice(i,1);} }
+    DB.sales=DB.sales.filter(x=>x.id!==b.dataset.del); save(); render();}));
+  updCalc();
+}
+document.addEventListener("keydown",e=>{
+  if(tab!=="calc" || $("#modal").innerHTML) return;
+  const tg=e.target.tagName; if(tg==="INPUT"||tg==="SELECT"||tg==="TEXTAREA") return;
+  const m={"*":"×","/":"÷","-":"−","+":"+",",":".",".":"."};
+  if(/^[0-9]$/.test(e.key)) press(e.key);
+  else if(m[e.key]){ e.preventDefault(); const k=m[e.key]; k==="."?press("."):press(k); }
+  else if(e.key==="%") press("%");
+  else if(e.key==="Enter"||e.key==="="){ e.preventDefault(); press("="); }
+  else if(e.key==="Backspace") press("⌫");
+  else if(e.key==="Escape"||e.key==="Delete") press("C");
+});
+
+/* ============ 2) QARZ DAFTARI ============ */
+const balance = c => c.tx.reduce((a,t)=>a+(t.type==="debt"?t.amount:-t.amount),0);
+let debtQuery = "";
+function viewDebt(v){
+  if(openCustomer){ return viewCustomer(v); }
+  const total = DB.customers.reduce((a,c)=>a+Math.max(0,balance(c)),0);
+  const owing = DB.customers.filter(c=>balance(c)>0).length;
+  const list = DB.customers.filter(c=>c.name.toLowerCase().includes(debtQuery.toLowerCase()))
+    .sort((a,b)=>balance(b)-balance(a));
+  v.innerHTML = `
+  <div class="grid"><div class="stat"><div class="l">Jami qarz (bizga)</div><div class="v down">${som(total)}</div></div>
+  <div class="stat"><div class="l">Qarzdor mijozlar</div><div class="v">${owing} / ${DB.customers.length}</div></div></div>
+  <div style="height:12px"></div>
+  <div class="row"><input id="q" placeholder="Mijoz qidirish…" value="${esc(debtQuery)}"><button class="btn auto" id="addC">+ Mijoz</button></div>
+  <div style="height:12px"></div>
+  <div class="card"><div class="list">${list.length? list.map(c=>{const b=balance(c);return `
+    <div class="item click" data-c="${c.id}"><div><div class="t">${esc(c.name)}</div><div class="s">${esc(c.phone||"")}${c.tx.length?(c.phone?" · ":"")+"oxirgi: "+fmtDate(c.tx[c.tx.length-1].date):""}</div></div>
+    <div class="amt ${b>0?"down":b<0?"up":"mut"}">${b>0?som(b):b<0?"+"+som(-b)+" (ortiqcha)":"Qarz yo'q"}</div></div>`}).join("") : '<div class="empty">Mijozlar yo\'q.<br>«+ Mijoz» tugmasi bilan qo\'shing.</div>'}</div></div>`;
+  $("#q").oninput=e=>{ debtQuery=e.target.value; const p=e.target.selectionStart; viewDebt(v); const q=$("#q"); q.focus(); q.setSelectionRange(p,p); };
+  $("#addC").onclick=()=>customerForm();
+  v.querySelectorAll("[data-c]").forEach(d=>d.onclick=()=>{ openCustomer=d.dataset.c; render(); });
+}
+function customerForm(c){
+  openModal(`<h2>${c?"Mijozni tahrirlash":"Yangi mijoz"}</h2>
+    <label>Ismi</label><input id="cn" value="${esc(c?c.name:"")}" placeholder="Ism familiya">
+    <label>Telefon (ixtiyoriy)</label><input id="cp" inputmode="tel" value="${esc(c?c.phone:"")}" placeholder="+998 90 123 45 67">
+    <div class="row" style="margin-top:16px"><button class="btn sec" id="x">Bekor</button><button class="btn" id="ok">Saqlash</button></div>`,
+  s=>{ $("#cn",s).focus(); $("#x",s).onclick=closeModal;
+    $("#ok",s).onclick=()=>{ const n=$("#cn",s).value.trim(); if(!n){toast("Ism yozing");return;}
+      if(c){ c.name=n; c.phone=$("#cp",s).value.trim(); } else DB.customers.push({id:uid(),name:n,phone:$("#cp",s).value.trim(),note:"",tx:[]});
+      save(); closeModal(); render(); }; });
+}
+function viewCustomer(v){
+  const c=DB.customers.find(x=>x.id===openCustomer); if(!c){ openCustomer=null; return viewDebt(v); }
+  const b=balance(c); let run=0;
+  const rows=c.tx.map(t=>{ run+=(t.type==="debt"?t.amount:-t.amount); return {...t,run}; }).reverse();
+  v.innerHTML = `
+  <button class="btn sec sm" id="back">← Orqaga</button>
+  <div class="card" style="margin-top:12px">
+    <div class="spread"><div><div style="font-size:20px;font-weight:800">${esc(c.name)}</div><div class="mut">${esc(c.phone||"")}</div></div>
+    <div><button class="btn sec sm" id="edit">Tahrir</button> <button class="btn red sm" id="delC">O'chirish</button></div></div>
+    <div class="mut" style="margin-top:12px;font-size:12px">Hozirgi qarz</div>
+    <div style="font-size:30px;font-weight:800" class="${b>0?"down":"up"}">${b>=0?som(b):"+"+som(-b)+" ortiqcha"}</div>
+    <div class="row" style="margin-top:14px"><button class="btn" id="bDebt" style="background:var(--down)">+ Qarz berish</button><button class="btn" id="bPay">Qarz to'lash</button></div>
+  </div>
+  <div class="card"><h3>Tarix</h3><div class="list">${rows.length? rows.map(t=>`
+    <div class="item"><div><div class="t">${t.type==="debt"?"Qarz berildi":"To'lov qabul qilindi"}</div><div class="s">${fmtDate(t.date)}${t.note?" · "+esc(t.note):""} · qoldiq ${num(t.run)}</div></div>
+    <div style="text-align:right"><div class="amt ${t.type==="debt"?"down":"up"}">${t.type==="debt"?"+":"−"}${num(t.amount)}</div><button class="btn red sm" data-t="${t.id}" style="margin-top:4px;padding:3px 9px">✕</button></div></div>`).join("") : '<div class="empty">Yozuvlar yo\'q</div>'}</div></div>`;
+  $("#back").onclick=()=>{openCustomer=null;render();};
+  $("#edit").onclick=()=>customerForm(c);
+  $("#delC").onclick=()=>confirmBox(`«${c.name}» va uning barcha yozuvlari o'chirilsinmi?`,()=>{DB.customers=DB.customers.filter(x=>x.id!==c.id);save();openCustomer=null;render();});
+  $("#bDebt").onclick=()=>txForm(c,"debt"); $("#bPay").onclick=()=>txForm(c,"pay",b>0?b:0);
+  v.querySelectorAll("[data-t]").forEach(x=>x.onclick=()=>confirmBox("Yozuv o'chirilsinmi?",()=>{c.tx=c.tx.filter(t=>t.id!==x.dataset.t);save();render();}));
+}
+function txForm(c,type,pre){
+  openModal(`<h2>${type==="debt"?"Qarz berish":"Qarz to'lovi"} — ${esc(c.name)}</h2>
+   <label>Summa (so'm)</label><input id="ta" inputmode="decimal" value="${pre?pre:""}" placeholder="0">
+   <label>Sana</label><input id="td" type="date" value="${today()}">
+   <label>Izoh (ixtiyoriy)</label><input id="tn" placeholder="Masalan: un, yog'">
+   <div class="row" style="margin-top:16px"><button class="btn sec" id="x">Bekor</button><button class="btn" id="ok">Saqlash</button></div>`,
+  s=>{ $("#ta",s).focus(); $("#x",s).onclick=closeModal;
+    $("#ok",s).onclick=()=>{ const a=val($("#ta",s)); if(a<=0){toast("Summani kiriting");return;}
+      c.tx.push({id:uid(),date:$("#td",s).value||today(),type,amount:a,note:$("#tn",s).value.trim()});
+      c.tx.sort((p,q)=>p.date<q.date?-1:p.date>q.date?1:0);
+      save(); closeModal(); render(); toast("Saqlandi ✓"); }; });
+}
+
+/* ============ 3) KAPITAL ============ */
+function capitalReport(){
+  // kunlar bo'yicha: tikilgan, foyda, jamlanma
+  const days = {};
+  const get = d => days[d] || (days[d]={d,cap:0,profit:0,sales:0});
+  DB.capital.forEach(c=>get(c.date).cap+=c.amount);
+  DB.sales.forEach(s=>{ const r=get(s.date); r.profit+=saleProfit(s); r.sales+=s.amount; });
+  const arr = Object.values(days).sort((a,b)=>a.d<b.d?-1:1);
+  let cc=0,cp=0;
+  arr.forEach(r=>{ cc+=r.cap; cp+=r.profit; r.cumCap=cc; r.cumProfit=cp; r.net=cp-cc; });
+  const totCap=cc, totProfit=cp, net=cp-cc;
+  // nolga chiqqan sana: oxirigacha doimiy net>=0 bo'lgan eng birinchi kun
+  let be=null;
+  if(totCap>0 && net>=0){
+    for(let i=arr.length-1;i>=0;i--){ if(arr[i].net>=0 && arr[i].cumCap>0) be=arr[i].d; else break; }
+  }
+  return {arr,totCap,totProfit,net,be};
+}
+function viewCap(v){
+  const R=capitalReport();
+  const firstCap = DB.capital.length? DB.capital.map(c=>c.date).sort()[0]:null;
+  let status="";
+  if(R.totCap===0) status=`<div class="note">Avval savdoga qancha pul tikkaningizni kiriting («+ Pul tikish»).</div>`;
+  else if(R.net>=0) status=`<div class="note" style="background:var(--pri-soft);color:var(--pri)">✅ Kapital ${fmtDate(R.be)} kuni nolga chiqqan${firstCap?` (${Math.max(0,Math.round((parseD(R.be)-parseD(firstCap))/864e5))} kun ichida)`:""}. Sof foyda: <b>${som(R.net)}</b></div>`;
+  else status=`<div class="note">⏳ Hali nolga chiqmadi. Yana <b>${som(-R.net)}</b> foyda kerak.</div>`;
+  v.innerHTML = `
+  ${status}
+  <div class="grid g4">
+    <div class="stat"><div class="l">Jami tikilgan pul</div><div class="v">${som(R.totCap)}</div></div>
+    <div class="stat"><div class="l">Jami foyda</div><div class="v up">${som(R.totProfit)}</div></div>
+    <div class="stat"><div class="l">Sof natija</div><div class="v ${R.net>=0?"up":"down"}">${R.net>=0?"+":""}${som(R.net)}</div></div>
+    <div class="stat"><div class="l">Nolga chiqish sanasi</div><div class="v">${R.be?fmtDate(R.be):"—"}</div></div>
+  </div>
+  <div style="height:12px"></div>
+  <button class="btn full" id="addCap">+ Pul tikish (kapital qo'shish)</button>
+  <div style="height:12px"></div>
+  <div class="card"><h3>Tikilgan pullar</h3><div class="list">${DB.capital.length? DB.capital.slice().sort((a,b)=>a.date<b.date?1:-1).map(c=>`
+    <div class="item"><div><div class="t">${fmtDate(c.date)}</div><div class="s">${esc(c.note||"")}</div></div>
+    <div class="row auto" style="flex:none"><div class="amt">${som(c.amount)}</div><button class="btn red sm auto" data-d="${c.id}">✕</button></div></div>`).join("") : '<div class="empty">Hali kapital kiritilmagan</div>'}</div></div>
+  <div class="card"><h3>Kunma-kun jadval</h3><div class="scroll"><table>
+    <thead><tr><th>Sana</th><th>Tikildi</th><th>Savdo</th><th>Foyda</th><th>Jami tikilgan</th><th>Jami foyda</th><th>Natija</th></tr></thead>
+    <tbody>${R.arr.length? R.arr.slice().reverse().map(r=>`<tr class="${r.d===R.be?"be":""}"><td>${fmtDate(r.d)}${r.d===R.be?" ✅":""}</td><td>${r.cap?num(r.cap):"—"}</td><td>${r.sales?num(r.sales):"—"}</td><td class="up">${r.profit?num(r.profit):"—"}</td><td>${num(r.cumCap)}</td><td>${num(r.cumProfit)}</td><td class="${r.net>=0?"up":"down"}">${r.net>=0?"+":""}${num(r.net)}</td></tr>`).join("") : '<tr><td colspan="7" class="empty">Ma\'lumot yo\'q</td></tr>'}</tbody></table></div>
+    <div class="mut" style="font-size:12px;margin-top:8px">«Natija» = jami foyda − jami tikilgan pul. Natija 0 dan oshgan kun — kapital nolga chiqqan kun.</div></div>`;
+  $("#addCap").onclick=()=>openModal(`<h2>Savdoga pul tikish</h2>
+    <label>Summa (so'm)</label><input id="ka" inputmode="decimal" placeholder="0">
+    <label>Sana</label><input id="kd" type="date" value="${today()}">
+    <label>Izoh (ixtiyoriy)</label><input id="kn" placeholder="Masalan: tovar xaridi">
+    <div class="row" style="margin-top:16px"><button class="btn sec" id="x">Bekor</button><button class="btn" id="ok">Saqlash</button></div>`,
+    s=>{ $("#ka",s).focus(); $("#x",s).onclick=closeModal;
+      $("#ok",s).onclick=()=>{ const a=val($("#ka",s)); if(a<=0){toast("Summani kiriting");return;}
+        DB.capital.push({id:uid(),date:$("#kd",s).value||today(),amount:a,note:$("#kn",s).value.trim()}); save(); closeModal(); render(); }; });
+  v.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>confirmBox("Bu yozuv o'chirilsinmi?",()=>{DB.capital=DB.capital.filter(c=>c.id!==b.dataset.d);save();render();}));
+}
+
+/* ============ 4) STATISTIKA ============ */
+function periodKey(dateStr,p){
+  const d=parseD(dateStr);
+  if(p==="day") return dateStr;
+  if(p==="week"){ const wd=(d.getDay()+6)%7; return ymd(addDays(d,-wd)); }
+  return d.getFullYear()+"-"+pad(d.getMonth()+1);
+}
+function periodList(p){
+  const out=[], now=new Date();
+  if(p==="day"){ for(let i=13;i>=0;i--) out.push(ymd(addDays(now,-i))); }
+  else if(p==="week"){ const wd=(now.getDay()+6)%7; const mon=addDays(now,-wd); for(let i=11;i>=0;i--) out.push(ymd(addDays(mon,-7*i))); }
+  else { for(let i=11;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); out.push(d.getFullYear()+"-"+pad(d.getMonth()+1)); } }
+  return out;
+}
+function periodLabel(k,p){
+  if(p==="day"){ const d=parseD(k); return d.getDate()+" "+MONTHS[d.getMonth()]; }
+  if(p==="week"){ const d=parseD(k), e=addDays(d,6); return d.getDate()+"."+pad(d.getMonth()+1)+"–"+e.getDate()+"."+pad(e.getMonth()+1); }
+  const [y,m]=k.split("-"); return MONTHS[+m-1]+" "+y;
+}
+function viewStat(v){
+  const keys=periodList(period), agg={};
+  keys.forEach(k=>agg[k]={sales:0,profit:0,n:0});
+  // oldingi davr ham hisoblansin (birinchi qator uchun)
+  const prevKeyOf = k => period==="day"?ymd(addDays(parseD(k),-1)):period==="week"?ymd(addDays(parseD(k),-7)):(()=>{const [y,m]=k.split("-").map(Number);const d=new Date(y,m-2,1);return d.getFullYear()+"-"+pad(d.getMonth()+1);})();
+  const all={};
+  DB.sales.forEach(s=>{ const k=periodKey(s.date,period); const r=all[k]||(all[k]={sales:0,profit:0,n:0}); r.sales+=s.amount; r.profit+=saleProfit(s); r.n++; });
+  const rows = keys.map(k=>{ const r=all[k]||{sales:0,profit:0,n:0}; const p=all[prevKeyOf(k)]||{sales:0};
+    let ch=null; if(p.sales>0) ch=(r.sales-p.sales)/p.sales*100; else if(r.sales>0) ch=Infinity;
+    return {k,...r,prev:p.sales,ch}; });
+  const cur=rows[rows.length-1], prv=rows[rows.length-2]||{sales:0};
+  const chTxt = ch => ch==null?"—":ch===Infinity?"yangi":(ch>0?"▲ +":ch<0?"▼ ":"= ")+Math.abs(ch).toFixed(1)+"%";
+  const chCls = ch => ch==null?"mut":(ch>0?"up":ch<0?"down":"mut");
+  const names={day:["Bugun","Kecha"],week:["Shu hafta","O'tgan hafta"],month:["Shu oy","O'tgan oy"]}[period];
+  const best = rows.reduce((a,r)=>r.sales>a.sales?r:a,rows[0]);
+  v.innerHTML = `
+  <div class="seg" id="seg">${[["day","Kunlik"],["week","Haftalik"],["month","Oylik"]].map(([k,l])=>`<button data-p="${k}" class="${period===k?"on":""}">${l}</button>`).join("")}</div>
+  <div class="grid g4">
+    <div class="stat"><div class="l">${names[0]}</div><div class="v">${som(cur.sales)}</div></div>
+    <div class="stat"><div class="l">${names[1]}</div><div class="v">${som(prv.sales)}</div></div>
+    <div class="stat"><div class="l">O'zgarish</div><div class="v ${chCls(cur.ch)}">${chTxt(cur.ch)}</div></div>
+    <div class="stat"><div class="l">${names[0]}gi foyda</div><div class="v up">${som(cur.profit)}</div></div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="card"><h3>Savdo dinamikasi</h3>${chartSvg(rows,period)}</div>
+  <div class="card"><h3>Batafsil</h3><div class="scroll"><table>
+    <thead><tr><th>Davr</th><th>Savdo</th><th>Foyda</th><th>Soni</th><th>O'zgarish</th></tr></thead>
+    <tbody>${rows.slice().reverse().map(r=>`<tr><td>${periodLabel(r.k,period)}</td><td>${num(r.sales)}</td><td class="up">${num(r.profit)}</td><td>${r.n}</td><td class="${chCls(r.ch)}">${chTxt(r.ch)}</td></tr>`).join("")}</tbody></table></div>
+    ${best.sales>0?`<div class="mut" style="font-size:12px;margin-top:8px">Eng yaxshi davr: <b>${periodLabel(best.k,period)}</b> — ${som(best.sales)}</div>`:""}</div>`;
+  $("#seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{period=b.dataset.p;render();});
+}
+function chartSvg(rows,p){
+  const W=640,H=190,L=8,B=26,T=10, n=rows.length, max=Math.max(1,...rows.map(r=>r.sales));
+  const bw=(W-L*2)/n, ph=H-B-T;
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Savdo grafigi">`;
+  rows.forEach((r,i)=>{
+    const h=Math.max(r.sales>0?2:0,r.sales/max*ph), x=L+i*bw+bw*.18, w=bw*.64, y=T+ph-h;
+    const col = r.ch==null||r.ch===Infinity||r.ch>=0 ? "var(--pri)" : "var(--down)";
+    s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${col}"><title>${periodLabel(r.k,p)}: ${som(r.sales)}</title></rect>`;
+    if(n<=14 || i%2===(n-1)%2) s+=`<text x="${x+w/2}" y="${H-8}" text-anchor="middle" font-size="${n>12?10:11}" fill="var(--mut)">${p==="week"?periodLabel(r.k,p).split("–")[0]:periodLabel(r.k,p).replace(/ \d{4}$/,"")}</text>`;
+  });
+  s+=`<line x1="${L}" x2="${W-L}" y1="${T+ph}" y2="${T+ph}" stroke="var(--line)"/></svg>`;
+  return s;
+}
+
+/* ============ 5) SOZLAMA / ZAXIRA ============ */
+function viewSet(v){
+  v.innerHTML = `
+  <div class="card"><h3>Do'kon</h3>
+    <label>Do'kon nomi</label><input id="shop" value="${esc(DB.settings.shop)}" placeholder="Masalan: Bunyod savdo">
+    <label>Foyda foizi, % (tannarx kiritilmagan savdolar uchun)</label><input id="mg" inputmode="decimal" value="${DB.settings.margin}">
+    <button class="btn full" id="sv" style="margin-top:14px">Saqlash</button></div>
+  <div class="card"><h3>Zaxira nusxa</h3>
+    <div class="mut" style="font-size:13px;margin-bottom:10px">Ma'lumotlar shu qurilmaning o'zida saqlanadi. Telefon almashtirsangiz yoki dasturni o'chirsangiz yo'qolmasligi uchun vaqti-vaqti bilan zaxira oling.</div>
+    <div class="row"><button class="btn sec" id="bk">Zaxira matnini ko'rsatish</button><button class="btn sec" id="fl">Faylga saqlash</button></div>
+    <label>Tiklash uchun zaxira matnini shu yerga qo'ying</label><textarea id="rs" rows="3" placeholder="{…}"></textarea>
+    <div class="row" style="margin-top:8px"><button class="btn" id="rb">Matndan tiklash</button><button class="btn sec" id="rf">Fayldan tiklash</button></div>
+    <input type="file" id="file" accept=".json,application/json" style="display:none"></div>
+  <div class="card"><h3>Xavfli zona</h3><button class="btn red full" id="wipe">Barcha ma'lumotlarni o'chirish</button></div>
+  <div class="mut" style="text-align:center;font-size:12px">Savdo Hisobi · internetsiz ishlaydi</div>`;
+  $("#sv").onclick=()=>{ DB.settings.shop=$("#shop").value.trim(); DB.settings.margin=Math.max(0,Math.min(100,val($("#mg")))); save(); render(); toast("Saqlandi ✓"); };
+  $("#bk").onclick=()=>openModal(`<h2>Zaxira matni</h2><div class="mut" style="font-size:13px">Hammasini belgilab nusxa oling va xavfsiz joyga (Telegram «Saved messages») saqlang.</div><textarea id="bt" rows="8" readonly style="margin-top:10px">${esc(JSON.stringify(DB))}</textarea><div class="row" style="margin-top:12px"><button class="btn sec" id="x">Yopish</button><button class="btn" id="cp">Nusxa olish</button></div>`,
+    s=>{ $("#x",s).onclick=closeModal; $("#cp",s).onclick=async()=>{ const t=$("#bt",s); t.select(); try{ await navigator.clipboard.writeText(t.value);}catch(e){ document.execCommand("copy"); } toast("Nusxa olindi ✓"); }; });
+  $("#fl").onclick=()=>{ const b=new Blob([JSON.stringify(DB)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download="savdo-zaxira-"+today()+".json"; document.body.appendChild(a); a.click(); a.remove(); toast("Fayl yuklandi"); };
+  const restore = txt => { try{ const o=JSON.parse(txt); if(!o||!Array.isArray(o.sales)) throw 0; confirmBox("Hozirgi ma'lumotlar zaxiradagi bilan almashtirilsinmi?",()=>{ localStorage.setItem(KEY,JSON.stringify(o)); load(); render(); toast("Tiklandi ✓"); }); }catch(e){ toast("Zaxira noto'g'ri"); } };
+  $("#rb").onclick=()=>restore($("#rs").value);
+  $("#rf").onclick=()=>$("#file").click();
+  $("#file").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>restore(r.result); r.readAsText(f); };
+  $("#wipe").onclick=()=>confirmBox("HAMMA ma'lumot o'chadi. Davom etasizmi?",()=>{ localStorage.removeItem(KEY); load(); render(); });
+}
+
+/* ============ Ishga tushirish ============ */
+load(); render();
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+</script>
+</body>
+</html>

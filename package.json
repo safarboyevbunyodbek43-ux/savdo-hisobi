@@ -1,0 +1,36 @@
+{
+  "name": "savdo-hisobi",
+  "version": "1.0.0",
+  "description": "Savdo Hisobi - qarz daftari, kapital, kalkulyator, statistika",
+  "main": "electron/main.js",
+  "author": "Savdo Hisobi",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win --x64 --publish never"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "uz.savdo.hisobi",
+    "productName": "Savdo Hisobi",
+    "directories": { "output": "dist" },
+    "files": ["www/**/*", "electron/**/*", "package.json"],
+    "win": {
+      "icon": "electron/icon.ico",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true },
+    "artifactName": "SavdoHisobi-${version}-${target}.${ext}"
+  }
+}
